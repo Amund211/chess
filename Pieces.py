@@ -17,7 +17,8 @@ __all__ = ["WHITE", "BLACK", "King", "Queen", "Bishop", "Knight", "Rook",  "Pawn
 # Color comparisins can be done using is, because python caches
 # small integers, and thus they refer to the same object in memory
 #
-# >>> 1 is 1
+# >>> a, b = 1, 1
+# >>> a is b
 # True
 WHITE = 0
 BLACK = 1

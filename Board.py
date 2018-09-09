@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 
+import copy
 from states import STATES
 
 __all__ = ["Board"]
@@ -24,16 +25,24 @@ class Board():
 
             The values for rank and file are both mapped to numbers 0-7.
             (A4 then maps to 3,0)
+
+        toMove: indicates whether WHITE or BLACK is to move
         """
 
-        # Initialize empty board
-        self.state = [[None] * 8] * 8
-        
         # Populate board
-        self.populate()
+        if state is None:
+            # No given state -> default starting board
+            self.populate("default")
+        else:
+            validity = self.validateState(state)
+            if validity[0]:
+                self.populate(state)
+            else:
+                # Invalid state with reason validity[1]
+                raise StateError(validity[1])
 
     def populate(self, state=None, preset="default"):
-        """Verifies given state or preset, and sets internal state"""
+        """Sets internal state to given state or preset"""
         # Finding new state
         if state is not None:
             newState = state
@@ -43,15 +52,31 @@ class Board():
             # No given state and invalid preset
             raise ValueError("The given preset \"{}\" is not defined or could not be found.\nList of defined presets:\n{}".format(preset, list(STATES.keys())))
 
-        # Verifying the new state
-        if self.verifyState(state):
-            self.state = newState
-        else:
-            raise StateError(state, "reason")
+        # Make deep copy of selected state to avoid interference
+        self.state = copy.deepcopy(newState)
 
-    def verifyState(self, state):
-        """Returns True if given state is valid"""
-        return True
+    def validateState(self, state):
+        """
+        Validates a state by testing for size of board, type of pieces and game logic.
+        
+        The first returned element is True for valid states, and False otherwise
+        The second returned element is the given reason for not passing validation
+        """
+        if len(state) != 8:
+            # A state must have exactly 8 ranks
+            return False, "State has {} ranks, should be 8".format(len(state))
 
+        for rankIndex, rank in enumerate(state):
+            if len(rank) != 8:
+                # Each rank must have exactly 8 files
+                return False, "Rank {} has {} files, should be 8".format(rankIndex, len(rank))
             
+            for fileIndex, square in enumerate(rank):
+                if square is not None and type(square) not in Pieces:
+                    # Each square must be either empty, or contain
+                    # a valid piece
+                    return False, "Value in position ({}, {}) was not recognized as a piece".format(rankIndex, fileIndex)
+
+        # Verify validity under game logic (checks, pawns etc.)
+        return True
 
