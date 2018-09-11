@@ -12,7 +12,7 @@ Properties:
     hasMoved: Whether the piece has moved this game
 """
 
-__all__ = ["WHITE", "BLACK", "King", "Queen", "Bishop", "Knight", "Rook",  "Pawn", "Pieces"]
+__all__ = ["WHITE", "BLACK", "King", "Queen", "Bishop", "Knight", "Rook",  "Pawn"]
 
 # Color comparisins can be done using is, because python caches
 # small integers, and thus they refer to the same object in memory
@@ -24,64 +24,57 @@ WHITE = 0
 BLACK = 1
 
 
-class King():
-    def __init__(self, color=WHITE, hasMoved=False):
+class Piece():
+    def __init_subclass__(cls):
+        if not callable(getattr(cls, "move", None)):
+            raise NotImplementedError("Piece class '{}' has no method 'move'".format(cls.__name__))
+
+    def __init__(self, color=WHITE):
+        if color is not WHITE and color is not BLACK:
+            raise ValueError("Invalid color for {}: '{}'".format(type(self).__name__, color))
         self.color = color
+
+
+class King(Piece):
+    def __init__(self, *args, hasMoved=False, **kwargs):
         self.hasMoved = hasMoved
+        super().__init__(*args, **kwargs)
 
     def move(self, board, current, target):
         """Returns True if move is valid in an isolated sense"""
         return True
 
 
-class Queen():
-    def __init__(self, color=WHITE, hasMoved=False):
-        self.color = color
-        self.hasMoved = hasMoved
-
+class Queen(Piece):
     def move(self, board, current, target):
         """Returns True if move is valid in an isolated sense"""
         return True
 
 
-class Bishop():
-    def __init__(self, color=WHITE, hasMoved=False):
-        self.color = color
-        self.hasMoved = hasMoved
-
+class Bishop(Piece):
     def move(self, board, current, target):
         """Returns True if move is valid in an isolated sense"""
         return True
 
 
-class Knight():
-    def __init__(self, color=WHITE, hasMoved=False):
-        self.color = color
-        self.hasMoved = hasMoved
-
+class Knight(Piece):
     def move(self, board, current, target):
         """Returns True if move is valid in an isolated sense"""
         return True
 
 
-class Rook():
-    def __init__(self, color=WHITE, hasMoved=False):
-        self.color = color
-        self.hasMoved = hasMoved
-
+class Rook(Piece):
     def move(self, board, current, target):
         """Returns True if move is valid in an isolated sense"""
         return True
 
 
-class Pawn():
-    def __init__(self, color=WHITE, hasMoved=False):
-        self.color = color
+class Pawn(Piece):
+    def __init__(self, *args, hasMoved=False, **kwargs):
         self.hasMoved = hasMoved
+        super().__init__(*args, **kwargs)
 
     def move(self, board, current, target):
         """Returns True if move is valid in an isolated sense"""
         return True
 
-
-Pieces = set([King, Queen, Bishop, Knight, Rook, Pawn])

@@ -32,7 +32,7 @@ class Board():
         # Populate board
         if state is None:
             # No given state -> default starting board
-            self.populate("default")
+            self.populate(preset="default")
         else:
             validity = self.validateState(state)
             if validity[0]:
@@ -51,9 +51,11 @@ class Board():
         else:
             # No given state and invalid preset
             raise ValueError("The given preset \"{}\" is not defined or could not be found.\nList of defined presets:\n{}".format(preset, list(STATES.keys())))
+            return
 
         # Make deep copy of selected state to avoid interference
-        self.state = copy.deepcopy(newState)
+        self.state = copy.deepcopy(newState[0])
+        self.toMove = newState[1]
 
     def validateState(self, state):
         """
@@ -72,10 +74,10 @@ class Board():
                 return False, "Rank {} has {} files, should be 8".format(rankIndex, len(rank))
             
             for fileIndex, square in enumerate(rank):
-                if square is not None and type(square) not in Pieces:
+                if square is not None and not isinstance(square, Piece):
                     # Each square must be either empty, or contain
                     # a valid piece
-                    return False, "Value in position ({}, {}) was not recognized as a piece".format(rankIndex, fileIndex)
+                    return False, "Value in position ({}, {}) was not recognized as an empty square or a piece".format(rankIndex, fileIndex)
 
         # Verify validity under game logic (checks, pawns etc.)
         return True
