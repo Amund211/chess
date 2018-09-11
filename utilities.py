@@ -4,11 +4,11 @@ __all__ = ["NotationError", "MoveError", "StateError"]
 
 class ChessError(Exception):
     """Base class for exceptions in the chess engine"""
-    def __init__(self, expression, reason=None):
-        # Verify upon init that instance has a callable property 'response'
-        if not callable(getattr(self, "response", None)):
+    def __init_subclass__(cls):
+        if not callable(getattr(cls, "response", None)):
             raise NotImplementedError("Child of ChessError has no method response")
 
+    def __init__(self, expression, reason=None):
         # Save properties to instance
         self.expression = expression
         self.reason = reason
