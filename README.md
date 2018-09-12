@@ -1,2 +1,2 @@
 # Chess
-Open source chess engine in python
+Open source chess game in python

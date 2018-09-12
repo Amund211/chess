@@ -48,7 +48,7 @@ class Board():
         at that position in the boardstate is returned.
 
         If the key is not a tuple, or the values are outside
-        of the valid range, IndexError is raised. This is 
+        of the valid range, IndexError is raised. This is
         done by the 'validateKey' method.
         """
         # Validate key
@@ -67,7 +67,7 @@ class Board():
         value is written to that position.
 
         If the key is not a tuple, or the values are outside
-        of the valid range, IndexError is raised. This is 
+        of the valid range, IndexError is raised. This is
         done by the 'validateKey' method.
 
         If the given value is neither None or an instance
