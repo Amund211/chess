@@ -12,7 +12,7 @@ Properties:
     hasMoved: Whether the piece has moved this game
 """
 
-__all__ = ["WHITE", "BLACK", "King", "Queen", "Bishop", "Knight", "Rook",  "Pawn"]
+__all__ = ["WHITE", "BLACK", "Piece", "King", "Queen", "Bishop", "Knight", "Rook",  "Pawn"]
 
 # Color comparisins can be done using is, because python caches
 # small integers, and thus they refer to the same object in memory

@@ -1,27 +1,30 @@
 #! /usr/bin/env python
 
 import copy
+from Pieces import *
+from utilities import *
 from states import STATES
 
 __all__ = ["Board"]
 
 class Board():
-    def __init__(self, state=None, moves=None):
+    def __init__(self, gamestate=STATES["default"], moves=None):
         """
         Initialize the board
 
         If given no inputs, sets up a default starting board.
-        If a state is given (type: Board) then this state is written to the board.
-        If a list of moves are given (AN) then these are attempted executed.
-        When both a state and list of moves are given, the state is written,
-        and the moves are then attempted executed.
+        If a gamestate is given (tuple (boardstate, toMove) then this state
+        is written to the board. If a list of moves are given (AN) then these
+        are attempted executed.  When both a gamestate and list of moves are given,
+        the state is written, and the moves are then attempted executed.
+
 
         Properties:
 
-        state: 2-dim list of the positions on the board. The first dimension
+        boardstate: 2-dim list of the positions on the board. The first dimension
             contains the ranks (1-8), while the second contains the files (A-H).
             This enables switching perspective (White/Black) by simply reversing
-            the first list.
+            the outer list.
 
             The values for rank and file are both mapped to numbers 0-7.
             (A4 then maps to 3,0)
@@ -30,45 +33,95 @@ class Board():
         """
 
         # Populate board
-        if state is None:
-            # No given state -> default starting board
-            self.populate(preset="default")
-        else:
-            validity = self.validateState(state)
-            if validity[0]:
-                self.populate(state)
-            else:
-                # Invalid state with reason validity[1]
-                raise StateError(validity[1])
+        stateValidity = self.validateState(gamestate)
+        if not stateValidity[0]:
+            # Invalid gamestate with reason stateValidity[1]
+            raise StateError(stateValidity[1])
 
-    def populate(self, state=None, preset="default"):
-        """Sets internal state to given state or preset"""
-        # Finding new state
-        if state is not None:
-            newState = state
-        elif preset in STATES:
-            newState = STATES[preset]
-        else:
-            # No given state and invalid preset
-            raise ValueError("The given preset \"{}\" is not defined or could not be found.\nList of defined presets:\n{}".format(preset, list(STATES.keys())))
-            return
+        self._populate(gamestate)
 
-        # Make deep copy of selected state to avoid interference
-        self.state = copy.deepcopy(newState[0])
-        self.toMove = newState[1]
-
-    def validateState(self, state):
+    def __getitem__(self, key):
         """
-        Validates a state by testing for size of board, type of pieces and game logic.
+        Called to implement the evaluation of self[key]
+
+        When key is a position tuple, (0-7, 0-7) the value
+        at that position in the boardstate is returned.
+
+        If the key is not a tuple, or the values are outside
+        of the valid range, IndexError is raised. This is 
+        done by the 'validateKey' method.
+        """
+        # Validate key
+        keyValidity = self.validateKey(key)
+        if not keyValidity[0]:
+            # Invalid key with reason keyValidity[1]
+            raise IndexError(keyValidity[1])
+
+        return self.boardstate[key[0]][key[1]]
+
+    def __setitem__(self, key, value):
+        """
+        Called to implement assignment to self[key]
+
+        When key is a position tuple, (0-7, 0-7) the given
+        value is written to that position.
+
+        If the key is not a tuple, or the values are outside
+        of the valid range, IndexError is raised. This is 
+        done by the 'validateKey' method.
+
+        If the given value is neither None or an instance
+        of Piece, TypeError is raised.
+        """
+        # Validate key
+        keyValidity = self.validateKey(key)
+        if not keyValidity[0]:
+            # Invalid key with reason keyValidity[1]
+            raise IndexError(keyValidity[1])
+
+        # Validate new value
+        if value is not None and not isinstance(value, Piece):
+            raise TypeError("Given value must be either None, or an instance of Piece")
+
+        self.boardstate[key[0]][key[1]] = value
+
+
+    @staticmethod
+    def validateKey(key):
+        if not type(key) is tuple:
+            # Preferably raise TypeError
+            return False, "Index for instance of Board must be a position tuple."
+        elif len(key) != 2:
+            return False, "Key must be a tuple of length 2"
+        elif key[0] < 0 or key[0] > 7:
+            return False, "Position values must be in the range 0-7"
+        elif key[1] < 0 or key[1] > 7:
+            return False, "Position values must be in the range 0-7"
+
+        # Key valid
+        return True, "Passed validation"
+
+    def _populate(self, gamestate):
+        """Sets internal gamestate to given state"""
+        # Make deep copy of selected boardstate to avoid interference
+        self.boardstate = copy.deepcopy(gamestate[0])
+        self.toMove = gamestate[1]
+
+    @staticmethod
+    def validateState(gamestate):
+        """
+        Validates a gamestate by testing for size of board, type of pieces and game logic.
         
-        The first returned element is True for valid states, and False otherwise
+        The first returned element is True for valid gamestates, and False otherwise
         The second returned element is the given reason for not passing validation
         """
-        if len(state) != 8:
-            # A state must have exactly 8 ranks
-            return False, "State has {} ranks, should be 8".format(len(state))
+        boardstate = gamestate[0]
 
-        for rankIndex, rank in enumerate(state):
+        if len(boardstate) != 8:
+            # A state must have exactly 8 ranks
+            return False, "State has {} ranks, should be 8".format(len(boardstate))
+
+        for rankIndex, rank in enumerate(boardstate):
             if len(rank) != 8:
                 # Each rank must have exactly 8 files
                 return False, "Rank {} has {} files, should be 8".format(rankIndex, len(rank))
@@ -80,5 +133,5 @@ class Board():
                     return False, "Value in position ({}, {}) was not recognized as an empty square or a piece".format(rankIndex, fileIndex)
 
         # Verify validity under game logic (checks, pawns etc.)
-        return True
+        return True, "Passed validation"
 
