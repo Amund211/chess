@@ -2,7 +2,7 @@
 
 __all__ = ["AnyMove", "kingMoves", "queenMoves", "bishopMoves", "knightMoves", "rookMoves", "pawnMoves"]
 
-from utilities import validateKey
+from ..utilities import validateKey
 
 
 class AnyMove():
