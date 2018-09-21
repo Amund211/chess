@@ -15,42 +15,45 @@ class Pawn(Piece):
 
     def move(self, board, current, target):
         """Return True if move is valid in an isolated sense"""
+        if target not in self.getMoves(current):
+            return False, None
         if current[1] != target[1]:
             # Pawn has changed files -> capture
             if board[target] is not None:
                 if board[target].color is self.color:
                     # Can't capture own piece
-                    return False
+                    return False, None
                 else:
                     # Capture
-                    return True
+                    return True, None
             # En passant
-            passantTarget = board[(target[0], target[1] - self.direction)]
-            if type(passantTarget) == Pawn:
-                if passantTarget.passant:
-                    return True
+            passantTarget = (target[0], target[1] - self.direction)
+            passantPiece = board[passantTarget]
+            if type(passantPiece) == Pawn:
+                if passantPiece.passant and passantPiece.color is not self.color:
+                    return True, [passantTarget, None]
             # No passant
-            return False
+            return False, None
         else:
             # Pawn has stayed in file -> move
             relative = (target[0] - current[0], target[1] - current[1])
             if relative[0] == 2 * self.direction:
                 # Must be first move
                 if self.hasMoved:
-                    return False
+                    return False, None
 
                 # Two sqares ahead empty
                 if board[(target[0] + self.direction, target[1])] is not None:
-                    return False
+                    return False, None
                 if board[(target[0] + 2 * self.direction, target[1])] is not None:
-                    return False
+                    return False, None
 
-                return True
+                return True, None
             elif relative[0] == self.direction:
                 if board[(target[0] + self.direction, target[1])] is not None:
-                    return False
+                    return False, None
                 # Sqare ahead empty
-                return True
+                return True, None
             else:
                 raise ValueError("Move somehow invalid. current, target:", current, target)
 
