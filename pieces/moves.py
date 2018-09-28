@@ -36,7 +36,8 @@ class AnyMove():
 
 
 def kingMoves():
-    allMoves = []
+    # Castling
+    allMoves = [(0, -2), (0, 2)]
     for i in range(-1, 2):
         for j in range(-1, 2):
             if i == j == 0:
