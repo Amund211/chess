@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from Pieces import *
+from .pieces import *
 
 __all__ = ["STATES"]
 
