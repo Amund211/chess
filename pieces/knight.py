@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 
-from . import moves, WHITE, BLACK
+from . import moves
 from .piece import Piece
 
 class Knight(Piece):
@@ -11,8 +11,8 @@ class Knight(Piece):
         if target in self.getMoves(current):
             piece = board[target]
             if piece is None:
-                return True
-            elif piece.color != self.color:
-                return True
-        return False
+                return True, None
+            elif piece.color is not self.color:
+                return True, None
+        return False, None
 
