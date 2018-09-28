@@ -2,15 +2,12 @@
 
 __all__ = ["AnyMove", "kingMoves", "queenMoves", "bishopMoves", "knightMoves", "rookMoves", "pawnMoves"]
 
-from ..utilities import validateKey
-
 
 class AnyMove():
     """
     Represents a set containing all squares on the board
 
     This is achived by returning True on membership-tests
-    for any valid position tuple
     Iteration of this object returns a all squares on
     the board.
     """
@@ -19,8 +16,7 @@ class AnyMove():
         self._file = 0
 
     def __contains__(self, item):
-        keyValidity = validateKey(item)
-        return keyValidity[0]
+        return True
 
     def __iter__(self):
         return self
