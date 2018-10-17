@@ -11,7 +11,7 @@ class Pawn(Piece):
         self.passant = passant
         super().__init__(*args, **kwargs)
         # White pawns can only move upwards in rank
-        self.direction = 1 if self.color is WHITE else -1
+        self.direction = 1 if self.color == WHITE else -1
 
     def __repr__(self):
         base = super().__repr__()[:-1]
@@ -26,7 +26,7 @@ class Pawn(Piece):
         if self.position[1] != target[1]:
             # Pawn has changed files -> capture
             if board[target] is not None:
-                if board[target].color is self.color:
+                if board[target].color == self.color:
                     # Can't capture own piece
                     return False, None
                 else:
@@ -36,7 +36,7 @@ class Pawn(Piece):
             passantTarget = (target[0], target[1] - self.direction)
             passantPiece = board[passantTarget]
             if type(passantPiece) == Pawn:
-                if passantPiece.passant and passantPiece.color is not self.color:
+                if passantPiece.passant and passantPiece.color != self.color:
                     return True, [passantTarget, None]
             # No passant
             return False, None

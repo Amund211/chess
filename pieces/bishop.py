@@ -32,7 +32,7 @@ class Bishop(Piece):
         if square is None:
             # Vacant square, can move
             return True, None
-        elif square.color is not self.color:
+        elif square.color != self.color:
             # Enemy square, can capture
             return True, None
         else:

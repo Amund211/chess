@@ -10,7 +10,7 @@ class Piece():
             raise NotImplementedError("Piece class '{}' has no property LEGALMOVES".format(cls.__name__))
 
     def __init__(self, color=WHITE, position=None):
-        if color is not WHITE and color is not BLACK:
+        if color != WHITE and color != BLACK:
             raise ValueError("Invalid color for {}: '{}'".format(type(self).__name__, color))
         self.color = color
         self.position = position

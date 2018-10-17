@@ -16,13 +16,6 @@ in the piece's docstring
 
 __all__ = ["WHITE", "BLACK", "Piece", "King", "Queen", "Bishop", "Knight", "Rook", "Pawn"]
 
-# Color comparisins can be done using is, because python caches
-# small integers, and thus they refer to the same object in memory
-#
-# >>> a, b = 1, 1
-# >>> a is b
-# True
-
 WHITE = 0
 BLACK = 1
 

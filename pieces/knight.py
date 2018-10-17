@@ -12,7 +12,7 @@ class Knight(Piece):
             piece = board[target]
             if piece is None:
                 return True, None
-            elif piece.color is not self.color:
+            elif piece.color != self.color:
                 return True, None
         return False, None
 
