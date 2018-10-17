@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 from . import moves
 from .piece import Piece
@@ -6,7 +6,7 @@ from .piece import Piece
 class Bishop(Piece):
     LEGALMOVES = moves.bishopMoves()
 
-    def move(self, board, current, target):
+    def validateMove(self, board, current, target):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves(current):
             False, None

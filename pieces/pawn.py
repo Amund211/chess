@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 from . import moves, WHITE, BLACK
 from .piece import Piece
@@ -13,7 +13,7 @@ class Pawn(Piece):
         # White pawns can only move upwards in rank
         self.direction = 1 if self.color is WHITE else -1
 
-    def move(self, board, current, target):
+    def validateMove(self, board, current, target):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves(current):
             return False, None

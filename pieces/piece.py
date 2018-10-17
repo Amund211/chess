@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 from . import moves, WHITE, BLACK
 
@@ -26,4 +26,9 @@ class Piece():
             absoluteMoves.add((relativePos[0] + rank, relativePos[1] + _file))
 
         return absoluteMoves
+
+    def executeMove(self, board, current, target, consequences):
+        # Optionally implemented by pieces to alter their internal
+        # state after a given move is executed
+        pass
 

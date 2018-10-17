@@ -11,7 +11,7 @@ class King(Piece):
         self.hasMoved = hasMoved
         super().__init__(*args, **kwargs)
 
-    def move(self, board, current, target):
+    def validateMove(self, board, current, target):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves(current):
             return False, None
