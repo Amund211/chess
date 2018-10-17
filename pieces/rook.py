@@ -10,6 +10,11 @@ class Rook(Piece):
         self.hasMoved = hasMoved
         super().__init__(*args, **kwargs)
 
+    def __repr__(self):
+        base = super().__repr__()[:-1]
+        return (base +
+                f", hasMoved={self.hasMoved!r})")
+
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves(self.position):

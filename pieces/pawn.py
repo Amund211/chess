@@ -13,6 +13,12 @@ class Pawn(Piece):
         # White pawns can only move upwards in rank
         self.direction = 1 if self.color is WHITE else -1
 
+    def __repr__(self):
+        base = super().__repr__()[:-1]
+        return (base +
+                f", hasMoved={self.hasMoved!r}"
+                f", passant={self.passant!r})")
+
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves(self.position):

@@ -4,9 +4,8 @@ from . import moves, WHITE, BLACK
 
 class Piece():
     def __init_subclass__(cls):
-        if not callable(getattr(cls, "move", None)):
-            raise NotImplementedError("Piece class '{}' has no method 'move'".format(cls.__name__))
-        return
+        if not callable(getattr(cls, "validateMove", None)):
+            raise NotImplementedError("Piece class '{}' has no method 'validateMove'".format(cls.__name__))
         if getattr(cls, "LEGALMOVES", None) is None:
             raise NotImplementedError("Piece class '{}' has no property LEGALMOVES".format(cls.__name__))
 
@@ -15,6 +14,10 @@ class Piece():
             raise ValueError("Invalid color for {}: '{}'".format(type(self).__name__, color))
         self.color = color
         self.position = position
+
+    def __repr__(self):
+        return (self.__class__.__qualname__ +
+                f"(color={self.color!r}, position={self.position!r})")
 
     @classmethod
     def getMoves(cls, position):
