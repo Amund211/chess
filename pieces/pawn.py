@@ -57,3 +57,8 @@ class Pawn(Piece):
             else:
                 raise ValueError("Move somehow invalid. current, target:", current, target)
 
+    def executeMove(self, board, current, target, consequences):
+        self.hasMoved = True
+        # Set passant flag when moving 2 spaces, otherwise set to False
+        self.passant = abs(current[0] - target[0]) == 2
+

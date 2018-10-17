@@ -42,6 +42,9 @@ class Rook(Piece):
         else:
             return False, None
 
+    def executeMove(self, board, current, target, consequences):
+        self.hasMoved = True
+
     @staticmethod
     def sign(n):
         if n > 0:
