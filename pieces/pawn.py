@@ -13,11 +13,11 @@ class Pawn(Piece):
         # White pawns can only move upwards in rank
         self.direction = 1 if self.color is WHITE else -1
 
-    def validateMove(self, board, current, target):
+    def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
-        if target not in self.getMoves(current):
+        if target not in self.getMoves(self.position):
             return False, None
-        if current[1] != target[1]:
+        if self.position[1] != target[1]:
             # Pawn has changed files -> capture
             if board[target] is not None:
                 if board[target].color is self.color:
@@ -36,7 +36,7 @@ class Pawn(Piece):
             return False, None
         else:
             # Pawn has stayed in file -> move
-            relative = (target[0] - current[0], target[1] - current[1])
+            relative = (target[0] - self.position[0], target[1] - self.position[1])
             if relative[0] == 2 * self.direction:
                 # Must be first move
                 if self.hasMoved:
@@ -55,10 +55,10 @@ class Pawn(Piece):
                 # Sqare ahead empty
                 return True, None
             else:
-                raise ValueError("Move somehow invalid. current, target:", current, target)
+                raise ValueError("Move somehow invalid. self.position, target:", self.position, target)
 
-    def executeMove(self, board, current, target, consequences):
+    def executeMove(self, board, target, consequences):
         self.hasMoved = True
         # Set passant flag when moving 2 spaces, otherwise set to False
-        self.passant = abs(current[0] - target[0]) == 2
+        self.passant = abs(self.position[0] - target[0]) == 2
 

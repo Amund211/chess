@@ -6,9 +6,9 @@ from .piece import Piece
 class Knight(Piece):
     LEGALMOVES = moves.knightMoves()
 
-    def validateMove(self, board, current, target):
+    def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
-        if target in self.getMoves(current):
+        if target in self.getMoves(self.position):
             piece = board[target]
             if piece is None:
                 return True, None

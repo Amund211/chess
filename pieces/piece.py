@@ -10,10 +10,11 @@ class Piece():
         if getattr(cls, "LEGALMOVES", None) is None:
             raise NotImplementedError("Piece class '{}' has no property LEGALMOVES".format(cls.__name__))
 
-    def __init__(self, color=WHITE):
+    def __init__(self, color=WHITE, position=None):
         if color is not WHITE and color is not BLACK:
             raise ValueError("Invalid color for {}: '{}'".format(type(self).__name__, color))
         self.color = color
+        self.position = position
 
     @classmethod
     def getMoves(cls, position):
@@ -27,7 +28,7 @@ class Piece():
 
         return absoluteMoves
 
-    def executeMove(self, board, current, target, consequences):
+    def executeMove(self, board, target, consequences):
         # Optionally implemented by pieces to alter their internal
         # state after a given move is executed
         pass

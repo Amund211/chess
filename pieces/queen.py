@@ -6,12 +6,12 @@ from .piece import Piece
 class Queen(Piece):
     LEGALMOVES = moves.queenMoves()
 
-    def validateMove(self, board, current, target):
+    def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
-        if target not in self.getMoves(current):
+        if target not in self.getMoves(self.position):
             False, None
-        relative = (target[0] - current[0], target[1] - current[1])
-        scanRank, scanFile = current
+        relative = (target[0] - self.position[0], target[1] - self.position[1])
+        scanRank, scanFile = self.position
 
         dirRank = self.sign(relative[0])
         dirFile = self.sign(relative[1])

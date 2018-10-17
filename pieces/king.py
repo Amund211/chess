@@ -11,12 +11,12 @@ class King(Piece):
         self.hasMoved = hasMoved
         super().__init__(*args, **kwargs)
 
-    def validateMove(self, board, current, target):
+    def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
-        if target not in self.getMoves(current):
+        if target not in self.getMoves(self.position):
             return False, None
 
-        if abs(current[1] - target[1]) != 2:
+        if abs(self.position[1] - target[1]) != 2:
             # Regular move
             piece = board[target]
             if piece is None:
@@ -25,33 +25,33 @@ class King(Piece):
                 return True, None
         else:
             # Castling move
-            if current[0] != (0 if self.color is WHITE else 7):
+            if self.position[0] != (0 if self.color is WHITE else 7):
                 # Can't castle unless on your side's first rank
                 return False, None
             if self.hasMoved:
                 return False, None
 
             # Cannot castle from check
-            # b.checkTest(current)
+            # b.checkTest(self.position)
 
             # Searching for rook to castle with using a
             # hard coded position, only works in default game
-            if target[1] > current[1]:
+            if target[1] > self.position[1]:
                 # Kingside castle (short)
                 dirFile = 1
             else:
                 # Queenside castle (long)
                 dirFile = -1
 
-            scanFile = current[1] + dirFile
+            scanFile = self.position[1] + dirFile
             castleCheck = False
             rookFile = None
             while scanFile >= 0 and scanFile < 8:
                 # Cannot castle through check
-                # b.checkTest((current[0], scanFile))
+                # b.checkTest((self.position[0], scanFile))
 
                 # Scan for rook or empty space
-                square = board[(current[0], scanFile)]
+                square = board[(self.position[0], scanFile)]
                 if square is None:
                     # Empty -> search next square
                     scanFile += dirFile
@@ -69,9 +69,9 @@ class King(Piece):
                 return False, None
 
             # Found rook and clear path
-            return True, [(current[0], rookFile), (current[0], current[1] + dirFile)]
+            return True, [(self.position[0], rookFile), (self.position[0], self.position[1] + dirFile)]
 
-    def executeMove(self, board, current, target, consequences):
+    def executeMove(self, board, target, consequences):
         self.hasMoved = True
 
         # Castle
