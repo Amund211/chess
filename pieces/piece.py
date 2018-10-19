@@ -26,7 +26,13 @@ class Piece():
             return moves.AnyMove()
         absoluteMoves = set()
         for relativePos in self.LEGALMOVES:
-            absoluteMoves.add((relativePos[0] + rank, relativePos[1] + _file))
+            absolutePos = (relativePos[0] + rank, relativePos[1] + _file)
+            for a in absolutePos:
+                if a >= 8 or a <= -1:
+                    break
+            else:
+                # Loop was finished, both indices in [0,7]
+                absoluteMoves.add(absolutePos)
 
         return absoluteMoves
 
