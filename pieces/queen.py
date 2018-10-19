@@ -15,7 +15,7 @@ class Queen(Piece):
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves(self.position):
-            False, None
+            return False, None
 
         relative = (target[0] - self.position[0], target[1] - self.position[1])
         scanRank, scanFile = self.position
@@ -24,7 +24,9 @@ class Queen(Piece):
         dirFile = self.sign(relative[1])
 
         # Start scanning one square over
-        scanPos = (scanRank + dirRank, scanFile + dirFile)
+        scanRank += dirRank
+        scanFile += dirFile
+        scanPos = (scanRank, scanFile)
         while scanPos != target:
             square = board[scanPos]
             if square is not None:
