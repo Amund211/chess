@@ -48,24 +48,28 @@ class King(Piece):
                 # Queenside castle (long)
                 dirFile = -1
 
-            scanFile = self.position[1] + dirFile
+            _file = self.position[1]
+            offset = dirFile
             castleCheck = False
             rookFile = None
-            while scanFile >= 0 and scanFile < 8:
+            while _file + offset >= 0 and _file + offset < 8:
                 # Cannot castle through check
                 # b.checkTest((self.position[0], scanFile))
 
                 # Scan for rook or empty space
-                square = board[(self.position[0], scanFile)]
+                square = board[(self.position[0], _file + offset)]
                 if square is None:
                     # Empty -> search next square
-                    scanFile += dirFile
+                    offset += dirFile
                 else:
                     if type(square) is Rook:
-                        if square.color == self.color and not square.hasMoved:
-                            # Rook and path valid to castle
-                            rookFile = scanFile
+                        if square.color == self.color and not square.hasMoved and abs(offset) >= 3:
+                            # Rook valid to castle and clear path
+                            rookFile = _file + offset
                             break
+                        else:
+                            # Met rook unable to castle
+                            return False, None
                     else:
                         # Met non-rook -> invalid move
                         return False, None
@@ -80,7 +84,7 @@ class King(Piece):
         self.hasMoved = True
 
         # Castle
-        if len(consequences) != 0:
+        if consequences is not None:
             rookPos = consequences[0][1]
             board[rookPos].hasMoved = True
 
