@@ -4,7 +4,7 @@ from . import moves, WHITE, BLACK
 from .piece import Piece
 
 class Pawn(Piece):
-    LEGALMOVES = moves.pawnMoves()
+    LEGALMOVES = moves.pawnMoves(1)
 
     def __init__(self, *args, hasMoved=False, passant=False, **kwargs):
         self.hasMoved = hasMoved
@@ -12,6 +12,9 @@ class Pawn(Piece):
         super().__init__(*args, **kwargs)
         # White pawns can only move upwards in rank
         self.direction = 1 if self.color == WHITE else -1
+        if self.color == BLACK:
+            self.LEGALMOVES = moves.pawnMoves(self.direction)
+
 
     def __repr__(self):
         base = super().__repr__()[:-1]

@@ -88,6 +88,6 @@ def rookMoves():
     return allMoves
 
 
-def pawnMoves():
-    return [(1, 0), (2, 0), (1, 1), (1, -1)]
+def pawnMoves(_dir):
+    return [(_dir * 1, 0), (_dir * 2, 0), (_dir * 1, 1), (_dir * 1, -1)]
 

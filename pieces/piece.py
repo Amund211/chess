@@ -19,14 +19,13 @@ class Piece():
         return (self.__class__.__qualname__ +
                 f"(color={self.color!r}, position={self.position!r})")
 
-    @classmethod
-    def getMoves(cls, position):
+    def getMoves(self, position):
         """Return set of valid moves using absolute coordinates"""
         rank, _file = position
-        if cls.LEGALMOVES is None:
+        if self.LEGALMOVES is None:
             return moves.AnyMove()
         absoluteMoves = set()
-        for relativePos in cls.LEGALMOVES:
+        for relativePos in self.LEGALMOVES:
             absoluteMoves.add((relativePos[0] + rank, relativePos[1] + _file))
 
         return absoluteMoves
