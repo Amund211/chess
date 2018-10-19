@@ -32,6 +32,7 @@ class Pawn(Piece):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves(self.position):
             return False, None
+
         if self.position[1] != target[1]:
             # Pawn has changed files -> capture
             if board[target] is not None:
@@ -58,14 +59,14 @@ class Pawn(Piece):
                     return False, None
 
                 # Two sqares ahead empty
-                if board[(target[0] + self.direction, target[1])] is not None:
+                if board[target] is not None:
                     return False, None
-                if board[(target[0] + 2 * self.direction, target[1])] is not None:
+                if board[(self.position[0] + 2 * self.direction, target[1])] is not None:
                     return False, None
 
                 return True, None
             elif relative[0] == self.direction:
-                if board[(target[0] + self.direction, target[1])] is not None:
+                if board[target] is not None:
                     return False, None
                 # Sqare ahead empty
                 return True, None
