@@ -19,6 +19,12 @@ class Pawn(Piece):
                 f", hasMoved={self.hasMoved!r}"
                 f", passant={self.passant!r})")
 
+    def __str__(self):
+        if self.color == WHITE:
+            return "\N{WHITE CHESS PAWN}"
+        else:
+            return "\N{BLACK CHESS PAWN}"
+
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves(self.position):

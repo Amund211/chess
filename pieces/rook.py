@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from . import moves
+from . import moves, WHITE, BLACK
 from .piece import Piece
 
 class Rook(Piece):
@@ -14,6 +14,12 @@ class Rook(Piece):
         base = super().__repr__()[:-1]
         return (base +
                 f", hasMoved={self.hasMoved!r})")
+
+    def __str__(self):
+        if self.color == WHITE:
+            return "\N{WHITE CHESS ROOK}"
+        else:
+            return "\N{BLACK CHESS ROOK}"
 
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""

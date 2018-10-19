@@ -1,10 +1,17 @@
 #! /usr/bin/env python3
 
-from . import moves
+from . import moves, WHITE, BLACK
 from .piece import Piece
 
 class Bishop(Piece):
     LEGALMOVES = moves.bishopMoves()
+
+    def __str__(self):
+        if self.color == WHITE:
+            return "\N{WHITE CHESS BISHOP}"
+        else:
+            return "\N{BLACK CHESS BISHOP}"
+
 
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""

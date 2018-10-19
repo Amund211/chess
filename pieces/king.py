@@ -16,6 +16,12 @@ class King(Piece):
         return (base +
                 f", hasMoved={self.hasMoved!r})")
 
+    def __str__(self):
+        if self.color == WHITE:
+            return "\N{WHITE CHESS KING}"
+        else:
+            return "\N{BLACK CHESS KING}"
+
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves(self.position):

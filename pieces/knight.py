@@ -1,10 +1,16 @@
 #! /usr/bin/env python3
 
-from . import moves
+from . import moves, WHITE, BLACK
 from .piece import Piece
 
 class Knight(Piece):
     LEGALMOVES = moves.knightMoves()
+
+    def __str__(self):
+        if self.color == WHITE:
+            return "\N{WHITE CHESS KNIGHT}"
+        else:
+            return "\N{BLACK CHESS KNIGHT}"
 
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
