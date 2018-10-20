@@ -54,7 +54,7 @@ class Rook(Piece):
         else:
             return False, None
 
-    def executeMove(self, board, target, consequences):
+    def executeMove(self, board, lastPos, consequences):
         self.hasMoved = True
 
     @staticmethod

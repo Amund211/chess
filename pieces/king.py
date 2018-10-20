@@ -86,11 +86,11 @@ class King(Piece):
             # Found rook and clear path
             return True, [(self.position[0], rookFile), (self.position[0], self.position[1] + dirFile)]
 
-    def executeMove(self, board, target, consequences):
+    def executeMove(self, board, lastPos, consequences):
         self.hasMoved = True
 
         # Castle
         if consequences is not None:
-            rookPos = consequences[0][1]
+            rookPos = consequences[1]
             board[rookPos].hasMoved = True
 

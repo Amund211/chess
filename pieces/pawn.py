@@ -44,7 +44,6 @@ class Pawn(Piece):
                     return True, None
             # En passant
             passantTarget = (target[0] - self.direction, target[1])
-            print(passantTarget)
             passantPiece = board[passantTarget]
             if type(passantPiece) == Pawn:
                 if passantPiece.passant and passantPiece.color != self.color:
@@ -74,8 +73,8 @@ class Pawn(Piece):
             else:
                 raise ValueError("Move somehow invalid. self.position, target:", self.position, target)
 
-    def executeMove(self, board, target, consequences):
+    def executeMove(self, board, lastPos, consequences):
+        self.passant = abs(self.position[0] - lastPos[0]) == 2
         self.hasMoved = True
         # Set passant flag when moving 2 spaces, otherwise set to False
-        self.passant = abs(self.position[0] - target[0]) == 2
 

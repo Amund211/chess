@@ -36,7 +36,7 @@ class Piece():
 
         return absoluteMoves
 
-    def executeMove(self, board, target, consequences):
+    def executeMove(self, board, lastPos, consequences):
         # Optionally implemented by pieces to alter their internal
         # state after a given move is executed
         pass
