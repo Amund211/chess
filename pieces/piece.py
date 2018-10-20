@@ -19,9 +19,9 @@ class Piece():
         return (self.__class__.__qualname__ +
                 f"(color={self.color!r}, position={self.position!r})")
 
-    def getMoves(self, position):
+    def getMoves(self):
         """Return set of valid moves using absolute coordinates"""
-        rank, _file = position
+        rank, _file = self.position
         if self.LEGALMOVES is None:
             return moves.AnyMove()
         absoluteMoves = set()

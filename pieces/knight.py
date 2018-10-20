@@ -14,7 +14,7 @@ class Knight(Piece):
 
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
-        if target in self.getMoves(self.position):
+        if target in self.getMoves():
             piece = board[target]
 
             if piece is None:

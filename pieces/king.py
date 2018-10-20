@@ -24,7 +24,7 @@ class King(Piece):
 
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
-        if target not in self.getMoves(self.position):
+        if target not in self.getMoves():
             return False, None
 
         if abs(self.position[1] - target[1]) != 2:

@@ -14,7 +14,7 @@ class Queen(Piece):
 
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
-        if target not in self.getMoves(self.position):
+        if target not in self.getMoves():
             return False, None
 
         relative = (target[0] - self.position[0], target[1] - self.position[1])
