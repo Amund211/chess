@@ -43,7 +43,8 @@ class Pawn(Piece):
                     # Capture
                     return True, None
             # En passant
-            passantTarget = (target[0], target[1] - self.direction)
+            passantTarget = (target[0] - self.direction, target[1])
+            print(passantTarget)
             passantPiece = board[passantTarget]
             if type(passantPiece) == Pawn:
                 if passantPiece.passant and passantPiece.color != self.color:
