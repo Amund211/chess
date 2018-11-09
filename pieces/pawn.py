@@ -4,17 +4,13 @@ from . import moves, WHITE, BLACK
 from .piece import Piece
 
 class Pawn(Piece):
-    LEGALMOVES = moves.pawnMoves(1)
-
     def __init__(self, *args, hasMoved=False, passant=False, **kwargs):
         self.hasMoved = hasMoved
         self.passant = passant
         super().__init__(*args, **kwargs)
         # White pawns can only move upwards in rank
-        self.direction = 1 if self.color == WHITE else -1
-        if self.color == BLACK:
-            self.LEGALMOVES = moves.pawnMoves(self.direction)
-
+        self.direction = self.color
+        self.LEGALMOVES = moves.pawnMoves(self.direction)
 
     def __repr__(self):
         base = super().__repr__()[:-1]
@@ -36,7 +32,7 @@ class Pawn(Piece):
         if self.position[1] != target[1]:
             # Pawn has changed files -> capture
             if board[target] is not None:
-                if board[target].color == self.color:
+                if board[target].color is self.color:
                     # Can't capture own piece
                     return False, None
                 else:
@@ -46,7 +42,7 @@ class Pawn(Piece):
             passantTarget = (target[0] - self.direction, target[1])
             passantPiece = board[passantTarget]
             if type(passantPiece) == Pawn:
-                if passantPiece.passant and passantPiece.color != self.color:
+                if passantPiece.passant and passantPiece.color is not self.color:
                     return True, [passantTarget, None]
             # No passant
             return False, None

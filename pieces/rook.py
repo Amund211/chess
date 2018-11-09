@@ -48,7 +48,7 @@ class Rook(Piece):
         if square is None:
             # Vacant square, can move
             return True, None
-        elif square.color != self.color:
+        elif square.color is not self.color:
             # Enemy square, can capture
             return True, None
         else:

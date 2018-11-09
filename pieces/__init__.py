@@ -16,8 +16,15 @@ in the piece's docstring
 
 __all__ = ["WHITE", "BLACK", "Piece", "King", "Queen", "Bishop", "Knight", "Rook", "Pawn"]
 
-WHITE = 0
-BLACK = 1
+# Color comparisins can be done using is, because python caches
+# small integers, and thus they refer to the same object in memory
+#
+# >>> a, b = 1, 1
+# >>> a is b
+# True
+
+WHITE = 1
+BLACK = -1
 
 from .piece import Piece
 from .king import King

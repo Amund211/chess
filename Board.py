@@ -212,7 +212,7 @@ class Board():
         elif whiteKing != 1:
             return False, "Board must have exactly one white king. (Not {})".format(whiteKing)
 
-        if self.inCheck(not self.toMove):
+        if self.inCheck(-self.toMove):
             return False, "Player to move can capture king."
 
         # Verify validity under game logic (checks, pawns etc.)
@@ -227,7 +227,7 @@ class Board():
             if target.color == player:
                 return False
 
-        dummy = Piece(not player)
+        dummy = Piece(-player)
         self[position] = dummy
 
         for attacker in attacking:
@@ -243,7 +243,7 @@ class Board():
     def inCheck(self, player):
         """Return True if given player is currently in check."""
         kingPos = self.pieces[player][self.KING].position
-        return self.isContested(not player, kingPos)
+        return self.isContested(-player, kingPos)
 
     def move(self, current, target):
         """Execute given move if valid, otherwise raise MoveError."""
@@ -302,7 +302,7 @@ class Board():
             self.boardState = tmpBoardstate
             raise MoveError("Move leaves king in check!")
 
-        self.toMove = not self.toMove
+        self.toMove = -self.toMove
 
     def interpretMove(self, moveStr):
         """

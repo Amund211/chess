@@ -36,7 +36,7 @@ class King(Piece):
                 return True, None
         else:
             # Castling move
-            if self.position[0] != (0 if self.color == WHITE else 7):
+            if self.position[0] != (0 if self.color is WHITE else 7):
                 # Can't castle unless on your side's first rank
                 return False, None
             if self.hasMoved:
@@ -69,8 +69,8 @@ class King(Piece):
                     offset += dirFile
                 else:
                     if type(square) is Rook:
-                        if square.color == self.color and not square.hasMoved and abs(offset) >= 3:
-                            # Rook valid to castle and clear path
+                        if square.color is self.color and not square.hasMoved and abs(offset) >= 3:
+                            # Rook and path valid to castle
                             rookFile = _file + offset
                             break
                         else:
