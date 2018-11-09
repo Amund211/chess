@@ -19,6 +19,15 @@ class Piece():
         return (self.__class__.__qualname__ +
                 f"(color={self.color!r}, position={self.position!r})")
 
+    @staticmethod
+    def sign(n):
+        if n > 0:
+            return 1
+        elif n < 0:
+            return -1
+        else:
+            return 0
+
     def getMoves(self):
         """Return set of valid moves using absolute coordinates"""
         rank, _file = self.position
