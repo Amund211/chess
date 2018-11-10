@@ -8,6 +8,12 @@ from .states import STATES
 
 __all__ = ["Board"]
 
+# Indicies for the piece tuples
+LIVING = "living"
+GRAVEYARD = "graveyard"
+KING = "king"
+
+
 class Board():
     """
     Properties:
@@ -25,11 +31,6 @@ class Board():
     pieces: tuple containing a tuple containing the living pieces and the graveyard for white/black
     """
 
-    # Indicies for the piece tuples
-    LIVING = "living"
-    GRAVEYARD = "graveyard"
-    KING = "king"
-
     def __init__(self, gamestate=STATES["default"], moves=None):
         """
         Initialize the board
@@ -44,8 +45,8 @@ class Board():
         self.boardstate = None
         self.toMove = None
         self.pieces = {
-            WHITE: {self.LIVING: [], self.GRAVEYARD: [], self.KING: None},
-            BLACK: {self.LIVING: [], self.GRAVEYARD: [], self.KING: None}
+            WHITE: {LIVING: [], GRAVEYARD: [], KING: None},
+            BLACK: {LIVING: [], GRAVEYARD: [], KING: None}
         }
 
         # Populate board with given state
@@ -94,11 +95,11 @@ class Board():
                 pieceCopy = eval(repr(square))
                 newRank.append(pieceCopy)
                 if pieceCopy is not None:
-                    self.pieces[square.color][self.LIVING].append(pieceCopy)
+                    self.pieces[square.color][LIVING].append(pieceCopy)
 
                 # Store reference to King piece
                 if type(pieceCopy) is King:
-                    self.pieces[square.color][self.KING] = pieceCopy
+                    self.pieces[square.color][KING] = pieceCopy
             self.boardstate.append(newRank)
 
         self.toMove = gamestate[1]
@@ -220,7 +221,7 @@ class Board():
 
     def isContested(self, player, position):
         """Return True if given position is contested by the given player."""
-        attacking = self.pieces[player][self.LIVING]
+        attacking = self.pieces[player][LIVING]
 
         target = self[position]
         if target is not None:
@@ -242,7 +243,7 @@ class Board():
 
     def inCheck(self, player):
         """Return True if given player is currently in check."""
-        kingPos = self.pieces[player][self.KING].position
+        kingPos = self.pieces[player][KING].position
         return self.isContested(-player, kingPos)
 
     def move(self, current, target):
@@ -264,8 +265,8 @@ class Board():
         targetPiece = self[target]
         if targetPiece is not None:
             self[target] = None
-            self.pieces[targetPiece.color][self.GRAVEYARD].append(targetPiece)
-            self.pieces[targetPiece.color][self.LIVING].remove(targetPiece)
+            self.pieces[targetPiece.color][GRAVEYARD].append(targetPiece)
+            self.pieces[targetPiece.color][LIVING].remove(targetPiece)
 
         self[current], self[target] = None, self[current]
 
@@ -279,8 +280,8 @@ class Board():
                 self[consequences[0]] = None
 
                 # Update living and graveyard
-                self.pieces[captured.color][self.GRAVEYARD].append(captured)
-                self.pieces[captured.color][self.LIVING].remove(captured)
+                self.pieces[captured.color][GRAVEYARD].append(captured)
+                self.pieces[captured.color][LIVING].remove(captured)
             else:
                 # Move piece
                 self[consequences[0]], self[consequences[1]] = self[consequences[1]], self[consequences[0]]
@@ -311,10 +312,10 @@ class Board():
         """
 
         if moveStr == "O-O-O":
-            kingPos = self.pieces[self.toMove][self.KING].position
+            kingPos = self.pieces[self.toMove][KING].position
             return kingPos, (kingPos[0], kingPos[1] - 2)
         elif moveStr == "O-O":
-            kingPos = self.pieces[self.toMove][self.KING].position
+            kingPos = self.pieces[self.toMove][KING].position
             return kingPos, (kingPos[0], kingPos[1] + 2)
 
         names = {
@@ -325,7 +326,7 @@ class Board():
                 "N": Knight
         }
 
-        candidates = self.pieces[self.toMove][self.LIVING]
+        candidates = self.pieces[self.toMove][LIVING]
         result = []
 
         offset = 0
