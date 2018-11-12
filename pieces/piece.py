@@ -6,8 +6,8 @@ class Piece():
     def __init_subclass__(cls):
         if not callable(getattr(cls, "validateMove", None)):
             raise NotImplementedError("Piece class '{}' has no method 'validateMove'".format(cls.__name__))
-        if getattr(cls, "LEGALMOVES", None) is None:
-            raise NotImplementedError("Piece class '{}' has no property LEGALMOVES".format(cls.__name__))
+        # if getattr(cls, "LEGALMOVES", None) is None:
+            # raise NotImplementedError("Piece class '{}' has no property LEGALMOVES".format(cls.__name__))
 
     def __init__(self, color=WHITE, position=None):
         if color is not WHITE and color is not BLACK:
@@ -27,6 +27,10 @@ class Piece():
             return -1
         else:
             return 0
+
+    @staticmethod
+    def getRelative(current, target):
+        return (target[0] - current[0], target[1] - current[1])
 
     def getMoves(self):
         """Return set of valid moves using absolute coordinates"""
