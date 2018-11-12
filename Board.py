@@ -64,13 +64,13 @@ class Board():
     def draw(self, perspective):
         render = " A B C D E F G H\n"
         n = -1
-        if perspective == WHITE:
+        if perspective is WHITE:
             view = self.boardstate[::-1]
         else:
             view = self.boardstate[:]
         for rank in view:
             n += 1
-            if perspective == WHITE:
+            if perspective is WHITE:
                 render += str(8-n)
             else:
                 render += str(n+1)
@@ -204,7 +204,7 @@ class Board():
                         # a valid piece
                         return False, "Value in position ({}, {}) was not recognized as an empty square or a piece".format(rankIndex, fileIndex)
                     elif type(square) is King:
-                        if square.color == WHITE:
+                        if square.color is WHITE:
                             whiteKing += 1
                         else:
                             blackKing += 1
@@ -225,7 +225,7 @@ class Board():
 
         target = self[position]
         if target is not None:
-            if target.color == player:
+            if target.color is player:
                 return False
 
         dummy = Piece(-player)
