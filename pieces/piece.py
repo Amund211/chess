@@ -49,8 +49,16 @@ class Piece():
 
         return absoluteMoves
 
-    def executeMove(self, board, lastPos, consequences):
-        # Optionally implemented by pieces to alter their internal
-        # state after a given move is executed
-        pass
+    def validateMove(self, board, target):
+        """
+        Returns a tuple (valid, consequences) where the first element
+        is a boolean, and the second a dict of consequences.
+        In cases where order of consequences matters, an OrderedDict
+        is used instead.
+
+        The keys in the consequences dict are flags defined in
+        the pieces module. The semantic meanings of the values
+        are described alongside the definition of these flags.
+        """
+        raise NotImplementedError(f"Piece '{self.__qualname__}' does not have a validateMove method!")
 

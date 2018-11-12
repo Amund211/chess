@@ -1,6 +1,8 @@
 #! /usr/bin/env python3
 
-from . import moves, WHITE, BLACK
+from collections import OrderedDict
+
+from . import moves, WHITE, BLACK, CAPTURE, MOVE, RELOCATE
 from .piece import Piece
 from .rook import Rook
 
@@ -25,22 +27,22 @@ class King(Piece):
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves():
-            return False, None
+            return False, {}
 
         if abs(self.position[1] - target[1]) != 2:
             # Regular move
             piece = board[target]
             if piece is None:
-                return True, None
-            elif piece.color != self.color:
-                return True, None
+                return True, {}
+            elif piece.color is not self.color:
+                return True, {CAPTURE: target}
         else:
             # Castling move
             if self.position[0] != (0 if self.color is WHITE else 7):
                 # Can't castle unless on your side's first rank
-                return False, None
+                return False, {}
             if self.hasMoved:
-                return False, None
+                return False, {}
 
             # Cannot castle from check
             # b.checkTest(self.position)
@@ -75,22 +77,17 @@ class King(Piece):
                             break
                         else:
                             # Met rook unable to castle
-                            return False, None
+                            return False, {}
                     else:
                         # Met non-rook -> invalid move
-                        return False, None
+                        return False, {}
             else:
                 # Found no rook
-                return False, None
+                return False, {}
 
             # Found rook and clear path
-            return True, [(self.position[0], rookFile), (self.position[0], self.position[1] + dirFile)]
-
-    def executeMove(self, board, lastPos, consequences):
-        self.hasMoved = True
-
-        # Castle
-        if consequences is not None:
-            rookPos = consequences[1]
-            board[rookPos].hasMoved = True
+            return True, OrderedDict([
+                (MOVE, (self.position[0], rookFile)),
+                (RELOCATE, ((self.position[0], rookFile), (self.position[0], target[1] - dirFile)))
+            ])
 

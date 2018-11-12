@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from . import moves, WHITE, BLACK
+from . import moves, WHITE, BLACK, CAPTURE
 from .piece import Piece
 
 class Rook(Piece):
@@ -24,7 +24,7 @@ class Rook(Piece):
     def validateMove(self, board, target):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves():
-            return False, None
+            return False, {}
 
         relative = (target[0] - self.position[0], target[1] - self.position[1])
         scanRank, scanFile = self.position
@@ -38,7 +38,7 @@ class Rook(Piece):
             square = board[scanPos]
             if square is not None:
                 # Piece blocking path to target
-                return False, None
+                return False, {}
             scanRank += dirRank
             scanFile += dirFile
             scanPos = (scanRank, scanFile)
@@ -47,13 +47,10 @@ class Rook(Piece):
         square = board[target]
         if square is None:
             # Vacant square, can move
-            return True, None
+            return True, {}
         elif square.color is not self.color:
             # Enemy square, can capture
-            return True, None
+            return True, {CAPTURE: target}
         else:
-            return False, None
-
-    def executeMove(self, board, lastPos, consequences):
-        self.hasMoved = True
+            return False, {}
 

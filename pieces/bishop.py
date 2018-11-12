@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from . import moves, WHITE, BLACK
+from . import moves, WHITE, BLACK, CAPTURE
 from .piece import Piece
 
 class Bishop(Piece):
@@ -30,7 +30,7 @@ class Bishop(Piece):
             square = board[scanPos]
             if square is not None:
                 # Piece blocking path to target
-                return False, None
+                return False, {}
             scanRank += dirRank
             scanFile += dirFile
             scanPos = (scanRank, scanFile)
@@ -39,10 +39,10 @@ class Bishop(Piece):
         square = board[target]
         if square is None:
             # Vacant square, can move
-            return True, None
+            return True, {}
         elif square.color is not self.color:
             # Enemy square, can capture
-            return True, None
+            return True, {CAPTURE: target}
         else:
-            return False, None
+            return False, {}
 

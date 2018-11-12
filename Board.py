@@ -28,7 +28,17 @@ class Board():
 
     toMove: indicates whether WHITE or BLACK is to move
 
-    pieces: tuple containing a tuple containing the living pieces and the graveyard for white/black
+    pieces: tuple containing a tuple containing the living pieces,
+        the graveyard and a reference to the king for white/black
+
+    passantPos: tuple indexed by WHITE/BLACK containing the position of
+        a pawn of that color or None.
+        Set to a pawns position when it sets the DOUBLE flag in the
+        consequences of a move.
+        At the end of a move, when the toMove attribute has been swapped,
+        the passant attribute of the pawn at the stored position is reset
+        to False, and the passantPos for that color set to None.
+
     """
 
     def __init__(self, gamestate=STATES["default"], moves=None):
@@ -47,6 +57,10 @@ class Board():
         self.pieces = {
             WHITE: {LIVING: [], GRAVEYARD: [], KING: None},
             BLACK: {LIVING: [], GRAVEYARD: [], KING: None}
+        }
+        self.passantPos = {
+            WHITE: None,
+            BLACK: None
         }
 
         # Populate board with given state
@@ -262,41 +276,47 @@ class Board():
         # Inefficient implementation
         tmpBoardstate = copy.deepcopy(self.boardstate)
 
-        targetPiece = self[target]
-        if targetPiece is not None:
-            self[target] = None
-            self.pieces[targetPiece.color][GRAVEYARD].append(targetPiece)
-            self.pieces[targetPiece.color][LIVING].remove(targetPiece)
-
-        self[current], self[target] = None, self[current]
-
-        if consequences is not None:
-            # Execute consequences
-            if consequences[1] is None:
-                # Capture piece
-                captured = self[consequences[0]]
-                
-                # Remove piece
-                self[consequences[0]] = None
-
-                # Update living and graveyard
-                self.pieces[captured.color][GRAVEYARD].append(captured)
-                self.pieces[captured.color][LIVING].remove(captured)
-            else:
-                # Move piece
-                self[consequences[0]], self[consequences[1]] = self[consequences[1]], self[consequences[0]]
-
-                # Update position
-                piece0 = self[consequences[1]]
-                piece1 = self[consequences[0]]
-
-                if piece0 is not None:
-                    piece0.position = consequences[1]
+        # Execute consequences
+        undolist = []
+        for flag in consequences:
+            data = consequences[flag]
+            if flag is CAPTURE:
+                pos = data
+                capturedPiece = self[pos]
+                undolist.append((flag, pos, capturedPiece))
+                self.pieces[-self.toMove][LIVING].remove(capturedPiece)
+                self.pieces[-self.toMove][GRAVEYARD].append(capturedPiece)
+                self[data] = None
+            elif flag is DOUBLE:
+                pos = data
+                undolist.append((flag, pos))
+                print(pos)
+                print(repr(self[pos]))
+                self[pos].passant = True
+                self.passantPos[self.toMove] = target
+            elif flag is MOVE:
+                pos = data
+                status = self[pos].hasMoved
+                undolist.append((flag, pos, status))
+                self[pos].hasMoved = True
+            elif flag is PROMOTE:
+                pass
+            elif flag is RELOCATE:
+                undolist.append((flag, data))
+                pos1, pos2 = data
+                piece1 = self[pos1]
+                piece2 = self[pos2]
+                print(repr(piece1), repr(piece2))
+                self[pos1], self[pos2] = piece2, piece1
                 if piece1 is not None:
-                    piece1.position = consequences[0]
+                    piece1.position = pos2
+                if piece2 is not None:
+                    piece2.position = pos1
+
+        # Move piece by swapping with target square (has to be None)
+        self[current], self[target] = self[target], piece
 
         piece.position = target
-        piece.executeMove(self, current, consequences)
 
         if self.inCheck(self.toMove):
             # Moving player is in check -> invalid move
@@ -304,6 +324,13 @@ class Board():
             raise MoveError("Move leaves king in check!")
 
         self.toMove = -self.toMove
+
+        passantSquare = self.passantPos[self.toMove] 
+        if passantSquare is not None:
+            if self[passantSquare] is not None:
+                # Piece was not captured last move
+                self[passantSquare].passant = False
+                self.passantPos[self.toMove] = None
 
     def interpretMove(self, moveStr):
         """

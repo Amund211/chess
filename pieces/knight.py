@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-from . import moves, WHITE, BLACK
+from . import moves, WHITE, BLACK, CAPTURE
 from .piece import Piece
 
 class Knight(Piece):
@@ -18,8 +18,8 @@ class Knight(Piece):
             piece = board[target]
 
             if piece is None:
-                return True, None
+                return True, {}
             elif piece.color is not self.color:
-                return True, None
-        return False, None
+                return True, {CAPTURE: target}
+        return False, {}
 
