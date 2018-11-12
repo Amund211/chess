@@ -7,7 +7,7 @@ class Queen(Piece):
     LEGALMOVES = moves.queenMoves()
 
     def __str__(self):
-        if self.color == WHITE:
+        if self.color is WHITE:
             return "\N{WHITE CHESS QUEEN}"
         else:
             return "\N{BLACK CHESS QUEEN}"

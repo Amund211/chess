@@ -19,7 +19,7 @@ class King(Piece):
                 f", hasMoved={self.hasMoved!r})")
 
     def __str__(self):
-        if self.color == WHITE:
+        if self.color is WHITE:
             return "\N{WHITE CHESS KING}"
         else:
             return "\N{BLACK CHESS KING}"

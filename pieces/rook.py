@@ -16,7 +16,7 @@ class Rook(Piece):
                 f", hasMoved={self.hasMoved!r})")
 
     def __str__(self):
-        if self.color == WHITE:
+        if self.color is WHITE:
             return "\N{WHITE CHESS ROOK}"
         else:
             return "\N{BLACK CHESS ROOK}"

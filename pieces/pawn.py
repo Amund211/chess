@@ -19,7 +19,7 @@ class Pawn(Piece):
                 f", passant={self.passant!r})")
 
     def __str__(self):
-        if self.color == WHITE:
+        if self.color is WHITE:
             return "\N{WHITE CHESS PAWN}"
         else:
             return "\N{BLACK CHESS PAWN}"

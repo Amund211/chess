@@ -7,7 +7,7 @@ class Bishop(Piece):
     LEGALMOVES = moves.bishopMoves()
 
     def __str__(self):
-        if self.color == WHITE:
+        if self.color is WHITE:
             return "\N{WHITE CHESS BISHOP}"
         else:
             return "\N{BLACK CHESS BISHOP}"

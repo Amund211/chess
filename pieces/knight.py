@@ -7,7 +7,7 @@ class Knight(Piece):
     LEGALMOVES = moves.knightMoves()
 
     def __str__(self):
-        if self.color == WHITE:
+        if self.color is WHITE:
             return "\N{WHITE CHESS KNIGHT}"
         else:
             return "\N{BLACK CHESS KNIGHT}"
