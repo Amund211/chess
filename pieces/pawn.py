@@ -41,7 +41,7 @@ class Pawn(Piece):
             # En passant
             passantTarget = (target[0] - self.direction, target[1])
             passantPiece = board[passantTarget]
-            if type(passantPiece) == Pawn:
+            if type(passantPiece) is Pawn:
                 if passantPiece.passant and passantPiece.color is not self.color:
                     return True, [passantTarget, None]
             # No passant
