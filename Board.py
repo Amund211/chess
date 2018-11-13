@@ -6,7 +6,6 @@ GRAVEYARD = "graveyard"
 KING = "king"
 
 import copy
-from .position import toHuman, toInternal
 from .pieces import *
 from .pieces.flags import *
 from .utilities import *

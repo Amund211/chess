@@ -5,7 +5,6 @@ import re
 from .Board import KING, LIVING
 from .utilities import *
 from .pieces import *
-from .position import toHuman, toInternal
 
 
 files = "a-h"
