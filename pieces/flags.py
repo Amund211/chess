@@ -37,8 +37,8 @@ def exeCapture(board, data):
 
 
 def revCapture(board, revData):
-    # Semantic meaning of data
-    pos, capturedPiece = data
+    # Semantic meaning of revData
+    pos, capturedPiece = revData
 
     # Remove piece graveyard of opponent, and add to board and
     # living list
@@ -62,8 +62,8 @@ def exeDouble(board, data):
 
 
 def revDouble(board, revData):
-    # Semantic meaning of data
-    pos = data
+    # Semantic meaning of revData
+    pos = revData
 
     # Unset passant attribute of piece, and passantPos of board
     board[pos].passant = False
@@ -88,8 +88,8 @@ def exeMove(board, data):
 
 
 def revMove(board, revData):
-    # Semantic meaning of data
-    pos, status = data
+    # Semantic meaning of revData
+    pos, status = revData
 
     # Reset attribute to last value
     board[pos].hasMoved = status
