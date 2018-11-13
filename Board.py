@@ -280,13 +280,15 @@ class Board():
         for flag in consequences:
             undodict[flag] = flag.execute(board=self, data=consequences[flag])
 
-        # Move piece by swapping with target square (has to be None)
-        self[current], self[target] = self[target], piece
-
+        # Move piece by swapping with target square (should to be None)
+        self[current], self[target] = self[target], self[current]
         piece.position = target
 
         if self.inCheck(self.toMove):
             # Moving player is in check -> invalid move
+            # Undo move (swap back)
+            self[current], self[target] = self[target], self[current]
+            piece.position = target
             # Undo from undodict
             for flag in undodict:
                 flag.revert(board=self, revData=undodict[flag])
