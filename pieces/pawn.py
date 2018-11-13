@@ -62,7 +62,7 @@ class Pawn(Piece):
                     return False, {}
                 if board[(self.position[0] + 2 * self.direction, target[1])] is not None:
                     return False, {}
-                return True, {DOUBLE: self.position}
+                return True, {DOUBLE: (self.position, target)}
             elif relative[0] == self.direction:
                 if board[target] is not None:
                     return False, {}

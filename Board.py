@@ -1,5 +1,10 @@
 #! /usr/bin/env python3
 
+# Indicies for the piece tuples
+LIVING = "living"
+GRAVEYARD = "graveyard"
+KING = "king"
+
 import copy
 from .position import toHuman, toInternal
 from .pieces import *
@@ -9,10 +14,6 @@ from .states import STATES
 
 __all__ = ["Board"]
 
-# Indicies for the piece tuples
-LIVING = "living"
-GRAVEYARD = "graveyard"
-KING = "king"
 
 
 class Board():
@@ -277,53 +278,7 @@ class Board():
         # Execute consequences
         undodict = {}
         for flag in consequences:
-            data = consequences[flag]
-            if flag is CAPTURE:
-                # Semantic meaning of data
-                pos = data
-                # Store reference to captured piece in undodict
-                capturedPiece = self[pos]
-                undodict[flag] = (pos, capturedPiece)
-
-                # Remove piece from board and living list of opponent
-                # add to graveyard of opponent
-                self.pieces[-self.toMove][LIVING].remove(capturedPiece)
-                self.pieces[-self.toMove][GRAVEYARD].append(capturedPiece)
-                self[pos] = None
-            elif flag is DOUBLE:
-                # Semantic meaning of data
-                pos = data
-                undodict[flag] = pos
-
-                # Set passant attribute of piece, and passantPos of board
-                self[pos].passant = True
-                self.passantPos[self.toMove] = target
-            elif flag is MOVE:
-                # Semantic meaning of data
-                pos = data
-                # Store current hasMoved value and store in undodict
-                status = self[pos].hasMoved
-                undodict[flag] = (pos, status)
-
-                # Set attribute
-                self[pos].hasMoved = True
-            elif flag is PROMOTE:
-                pass
-            elif flag is RELOCATE:
-                undodict[flag] = data
-                # Semantic meaning of data
-                pos1, pos2 = data
-                # Alias for pieces involved in swap
-                piece1 = self[pos1]
-                piece2 = self[pos2]
-
-                # Swap position in board
-                self[pos1], self[pos2] = piece2, piece1
-                # Set new position on piece(s)
-                if piece1 is not None:
-                    piece1.position = pos2
-                if piece2 is not None:
-                    piece2.position = pos1
+            undodict[flag] = flag.execute(board=self, data=consequences[flag])
 
         # Move piece by swapping with target square (has to be None)
         self[current], self[target] = self[target], piece
@@ -334,47 +289,7 @@ class Board():
             # Moving player is in check -> invalid move
             # Undo from undodict
             for flag in undodict:
-                data = undodict[flag]
-                if flag is CAPTURE:
-                    # Semantic meaning of data
-                    pos, capturedPiece = data
-
-                    # Remove piece graveyard of opponent, and add to board and
-                    # living list
-                    self.pieces[-self.toMove][LIVING].append(capturedPiece)
-                    self.pieces[-self.toMove][GRAVEYARD].remove(capturedPiece)
-                    self[pos] = capturedPiece
-                elif flag is DOUBLE:
-                    # Semantic meaning of data
-                    pos = data
-
-                    # Unset passant attribute of piece, and passantPos of board
-                    self[pos].passant = False
-                    self.passantPos[self.toMove] = None
-                elif flag is MOVE:
-                    # Semantic meaning of data
-                    pos, status = data
-
-                    # Reset attribute to last value
-                    self[pos].hasMoved = status
-                elif flag is PROMOTE:
-                    pass
-                elif flag is RELOCATE:
-                    # Symmetric operation, same as in actual consequence
-                    # Semantic meaning of data
-                    pos1, pos2 = data
-                    # Alias for pieces involved in swap
-                    piece1 = self[pos1]
-                    piece2 = self[pos2]
-
-                    # Swap position in board
-                    self[pos1], self[pos2] = piece2, piece1
-                    # Set new position on piece(s)
-                    if piece1 is not None:
-                        piece1.position = pos2
-                    if piece2 is not None:
-                        piece2.position = pos1
-
+                flag.revert(board=self, revData=undodict[flag])
             raise MoveError("Move leaves king in check!")
 
         self.toMove = -self.toMove
