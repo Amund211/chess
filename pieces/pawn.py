@@ -1,8 +1,16 @@
 #! /usr/bin/env python3
 
-from . import moves, WHITE, BLACK
+from . import moves, WHITE, BLACK, King, Queen, Rook, Bishop, Knight
 from .flags import CAPTURE, DOUBLE, PROMOTE
 from .piece import Piece
+
+SYMBOLS = {
+        "Q": Queen,
+        "R": Rook,
+        "B": Bishop,
+        "N": Knight
+}
+
 
 class Pawn(Piece):
     def __init__(self, *args, hasMoved=False, passant=False, **kwargs):
@@ -25,7 +33,7 @@ class Pawn(Piece):
         else:
             return "\N{BLACK CHESS PAWN}"
 
-    def validateMove(self, board, target):
+    def validateMove(self, board, target, promotion=None):
         """Return True if move is valid in an isolated sense"""
         if target not in self.getMoves():
             return False, {}
@@ -39,6 +47,12 @@ class Pawn(Piece):
                     return False, {}
                 else:
                     # Capture
+                    if target[0] == (-self.color - 1) % 9:
+                        # Target rank is 0 or 7, depending on color
+                        if promotion not in SYMBOLS:
+                            # Invalid symbol to promote to
+                            return False, {}
+                        return True, {CAPTURE: target, PROMOTE: (self.position, SYMBOLS[promotion](color=self.color))}
                     return True, {CAPTURE: target}
             else:
                 # En passant
@@ -64,12 +78,16 @@ class Pawn(Piece):
                     return False, {}
                 return True, {DOUBLE: (self.position, target)}
             elif relative[0] == self.direction:
+                # Sqare ahead occupied
                 if board[target] is not None:
                     return False, {}
 
-                # Sqare ahead empty
-                if target[0] == - self.color % 8:
-                    return True, {PROMOTE: "???"}
+                if target[0] == (-self.color - 1) % 9:
+                    # Target rank is 0 or 7, depending on color
+                    if promotion not in SYMBOLS:
+                        # Invalid symbol to promote to
+                        return False, {}
+                    return True, {PROMOTE: (self.position, SYMBOLS[promotion](color=self.color))}
 
                 return True, {}
             else:

@@ -98,13 +98,38 @@ def revMove(board, revData):
 MOVE = Flag(exeMove, revMove)
 
 # Flag for pawn promotion
-# Data: type of promotion
+# Data: (current pos, promotionpiece instance)
+# Since the consequence acts before the swap, the pawn
+# is promoted in place
 def exePromote(board, data):
-    pass
+    # Semantic meaning of data
+    pos, piece = data
+    pawn = board[pos]
+
+    # Remove pawn from board and living list and add to own graveyard
+    board.pieces[board.toMove][LIVING].remove(pawn)
+    board.pieces[board.toMove][GRAVEYARD].append(pawn)
+
+    # Add promoted piece and set position
+    board[pos] = piece
+    piece.position = pos
+    board.pieces[board.toMove][LIVING].append(piece)
+
+    return (pos, pawn)
 
 
 def revPromote(board, revData):
-    pass
+    # Semantic meaning of revData
+    pos, pawn = revData
+
+    # Delete promoted piece
+    piece = board[pos]
+    board.pieces[board.toMove][LIVING].remove(piece)
+
+    # Add pawn to board and living list and remove from own graveyard
+    board.pieces[board.toMove][LIVING].append(pawn)
+    board.pieces[board.toMove][GRAVEYARD].remove(pawn)
+    board[pos] = pawn
 
 
 PROMOTE = Flag(exePromote, revPromote)

@@ -262,7 +262,7 @@ class Board():
         kingPos = self.pieces[player][KING].position
         return self.isContested(-player, kingPos)
 
-    def move(self, current, target, validate=False):
+    def move(self, current, target, promotion=None, validate=False):
         """
         Execute given move if valid, otherwise raise MoveError.
         
@@ -281,7 +281,11 @@ class Board():
             else:
                 raise MoveError("Can't move opponent's piece!")
 
-        moveValid, consequences = piece.validateMove(board=self, target=target)
+        if type(piece) is Pawn:
+            moveValid, consequences = piece.validateMove(board=self, target=target, promotion=promotion)
+        else:
+            moveValid, consequences = piece.validateMove(board=self, target=target)
+
         
         if not moveValid:
             if validate:
@@ -293,6 +297,8 @@ class Board():
         undodict = {}
         for flag in consequences:
             undodict[flag] = flag.execute(board=self, data=consequences[flag])
+        # Update reference to piece in case of promotion
+        piece = self[current]
 
         # Move piece by swapping with target square (should to be None)
         self[current], self[target] = self[target], self[current]
