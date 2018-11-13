@@ -277,37 +277,51 @@ class Board():
         tmpBoardstate = copy.deepcopy(self.boardstate)
 
         # Execute consequences
-        undolist = []
+        undodict = {}
         for flag in consequences:
             data = consequences[flag]
             if flag is CAPTURE:
+                # Semantic meaning of data
                 pos = data
+                # Store reference to captured piece in undodict
                 capturedPiece = self[pos]
-                undolist.append((flag, pos, capturedPiece))
+                undodict[flag] = (pos, capturedPiece)
+
+                # Remove piece from board and living list of opponent
+                # add to graveyard of opponent
                 self.pieces[-self.toMove][LIVING].remove(capturedPiece)
                 self.pieces[-self.toMove][GRAVEYARD].append(capturedPiece)
                 self[data] = None
             elif flag is DOUBLE:
+                # Semantic meaning of data
                 pos = data
-                undolist.append((flag, pos))
-                print(pos)
-                print(repr(self[pos]))
+                undodict[flag] = pos
+
+                # Set passant attribute of piece, and passantPos of board
                 self[pos].passant = True
                 self.passantPos[self.toMove] = target
             elif flag is MOVE:
+                # Semantic meaning of data
                 pos = data
+                # Store current hasMoved value and store in undodict
                 status = self[pos].hasMoved
-                undolist.append((flag, pos, status))
+                undodict[flag] = (pos, status)
+
+                # Set attribute
                 self[pos].hasMoved = True
             elif flag is PROMOTE:
                 pass
             elif flag is RELOCATE:
-                undolist.append((flag, data))
+                undodict[flag] = data
+                # Semantic meaning of data
                 pos1, pos2 = data
+                # Alias for pieces involved in swap
                 piece1 = self[pos1]
                 piece2 = self[pos2]
-                print(repr(piece1), repr(piece2))
+
+                # Swap position in board
                 self[pos1], self[pos2] = piece2, piece1
+                # Set new position on piece(s)
                 if piece1 is not None:
                     piece1.position = pos2
                 if piece2 is not None:
@@ -321,6 +335,9 @@ class Board():
         if self.inCheck(self.toMove):
             # Moving player is in check -> invalid move
             self.boardState = tmpBoardstate
+            # Undo from undodict
+            for flag in undodict:
+                pass
             raise MoveError("Move leaves king in check!")
 
         self.toMove = -self.toMove
