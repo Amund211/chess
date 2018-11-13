@@ -273,9 +273,6 @@ class Board():
         if not moveValid:
             raise MoveError("Piece cannot move there!")
 
-        # Inefficient implementation
-        tmpBoardstate = copy.deepcopy(self.boardstate)
-
         # Execute consequences
         undodict = {}
         for flag in consequences:
@@ -291,7 +288,7 @@ class Board():
                 # add to graveyard of opponent
                 self.pieces[-self.toMove][LIVING].remove(capturedPiece)
                 self.pieces[-self.toMove][GRAVEYARD].append(capturedPiece)
-                self[data] = None
+                self[pos] = None
             elif flag is DOUBLE:
                 # Semantic meaning of data
                 pos = data
@@ -334,10 +331,49 @@ class Board():
 
         if self.inCheck(self.toMove):
             # Moving player is in check -> invalid move
-            self.boardState = tmpBoardstate
             # Undo from undodict
             for flag in undodict:
-                pass
+                data = undodict[flag]
+                if flag is CAPTURE:
+                    # Semantic meaning of data
+                    pos, capturedPiece = data
+
+                    # Remove piece graveyard of opponent, and add to board and
+                    # living list
+                    self.pieces[-self.toMove][LIVING].append(capturedPiece)
+                    self.pieces[-self.toMove][GRAVEYARD].remove(capturedPiece)
+                    self[pos] = capturedPiece
+                elif flag is DOUBLE:
+                    # Semantic meaning of data
+                    pos = data
+
+                    # Unset passant attribute of piece, and passantPos of board
+                    self[pos].passant = False
+                    self.passantPos[self.toMove] = None
+                elif flag is MOVE:
+                    # Semantic meaning of data
+                    pos, status = data
+
+                    # Reset attribute to last value
+                    self[pos].hasMoved = status
+                elif flag is PROMOTE:
+                    pass
+                elif flag is RELOCATE:
+                    # Symmetric operation, same as in actual consequence
+                    # Semantic meaning of data
+                    pos1, pos2 = data
+                    # Alias for pieces involved in swap
+                    piece1 = self[pos1]
+                    piece2 = self[pos2]
+
+                    # Swap position in board
+                    self[pos1], self[pos2] = piece2, piece1
+                    # Set new position on piece(s)
+                    if piece1 is not None:
+                        piece1.position = pos2
+                    if piece2 is not None:
+                        piece2.position = pos1
+
             raise MoveError("Move leaves king in check!")
 
         self.toMove = -self.toMove
