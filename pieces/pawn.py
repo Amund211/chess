@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
-from . import moves, WHITE, BLACK, CAPTURE, DOUBLE, PROMOTE
+from . import moves, WHITE, BLACK
+from .flags import CAPTURE, DOUBLE, PROMOTE
 from .piece import Piece
 
 class Pawn(Piece):

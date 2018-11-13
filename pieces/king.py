@@ -2,7 +2,8 @@
 
 from collections import OrderedDict
 
-from . import moves, WHITE, BLACK, CAPTURE, MOVE, RELOCATE
+from . import moves, WHITE, BLACK
+from .flags import CAPTURE, MOVE, RELOCATE
 from .piece import Piece
 from .rook import Rook
 

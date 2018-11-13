@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
-from . import moves, WHITE, BLACK, CAPTURE
+from . import moves, WHITE, BLACK
+from .flags import CAPTURE
 from .piece import Piece
 
 class Bishop(Piece):
