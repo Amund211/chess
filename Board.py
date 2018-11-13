@@ -262,18 +262,32 @@ class Board():
         kingPos = self.pieces[player][KING].position
         return self.isContested(-player, kingPos)
 
-    def move(self, current, target):
-        """Execute given move if valid, otherwise raise MoveError."""
+    def move(self, current, target, validate=False):
+        """
+        Execute given move if valid, otherwise raise MoveError.
+        
+        When validate is True, simply return whether the move is
+        valid.
+        """
         piece = self[current]
         if piece is None:
-            raise MoveError("Square is empty, no piece to move!")
+            if validate:
+                return False
+            else:
+                raise MoveError("Square is empty, no piece to move!")
         elif piece.color != self.toMove:
-            raise MoveError("Can't move opponent's piece!")
+            if validate:
+                return False
+            else:
+                raise MoveError("Can't move opponent's piece!")
 
         moveValid, consequences = piece.validateMove(board=self, target=target)
         
         if not moveValid:
-            raise MoveError("Piece cannot move there!")
+            if validate:
+                return False
+            else:
+                raise MoveError("Piece cannot move there!")
 
         # Execute consequences
         undodict = {}
@@ -284,15 +298,41 @@ class Board():
         self[current], self[target] = self[target], self[current]
         piece.position = target
 
+        # Set hasMoved property if present
+        setMoved = False
+        try:
+            hadMoved = piece.hasMoved
+        except AttributeError:
+            pass
+        else:
+            setMoved = True
+            piece.hasMoved = True
+
         if self.inCheck(self.toMove):
             # Moving player is in check -> invalid move
             # Undo move (swap back)
             self[current], self[target] = self[target], self[current]
-            piece.position = target
+            piece.position = current
+            if setMoved:
+                piece.hasMoved = hadMoved
             # Undo from undodict
             for flag in undodict:
                 flag.revert(board=self, revData=undodict[flag])
-            raise MoveError("Move leaves king in check!")
+
+            if validate:
+                return False
+            else:
+                raise MoveError("Move leaves king in check!")
+        elif validate:
+            # Undo move (swap back)
+            self[current], self[target] = self[target], self[current]
+            piece.position = current
+            if setMoved:
+                piece.hasMoved = hadMoved
+            # Undo from undodict
+            for flag in undodict:
+                flag.revert(board=self, revData=undodict[flag])
+            return True
 
         self.toMove = -self.toMove
 
@@ -387,7 +427,7 @@ class Board():
                 if candidate.position[1] != depFile:
                     continue
 
-            if candidate.validateMove(self, target)[0]:
+            if self.move(candidate.position, target, validate=True):
                 result.append(candidate)
 
         if len(result) == 0:
